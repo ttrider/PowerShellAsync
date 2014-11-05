@@ -41,3 +41,10 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+*.user
+/PowerShellAsync/bin/Debug
+/PowerShellAsync/obj/Debug
+/UnitTests/bin/Debug
+/UnitTests/obj/Debug
+*.suo
+/packages
