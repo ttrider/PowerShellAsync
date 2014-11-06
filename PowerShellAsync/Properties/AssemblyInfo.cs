@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("PowerShellAsync")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Base class for async-based cmdlets")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("TTRider, L.L.C.")]
 [assembly: AssemblyProduct("PowerShellAsync")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]

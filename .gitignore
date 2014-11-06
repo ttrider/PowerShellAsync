@@ -52,3 +52,6 @@ Temporary Items
 /packages
 
 /TestResults
+/PowerShellAsyncExample/packages
+/PowerShellAsyncExample/PowerShellAsyncExample/bin/Debug
+/PowerShellAsyncExample/PowerShellAsyncExample/obj/Debug
