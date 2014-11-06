@@ -50,7 +50,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="LICENSE" />
     <None Include="packages.config" />
     <None Include="TTRider.PowerShellAsync.dll.nuspec" />
   </ItemGroup>
