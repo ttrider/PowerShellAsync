@@ -11,8 +11,15 @@ namespace TTRider.PowerShellAsync
     /// </summary>
     public abstract class AsyncCmdlet : PSCmdlet
     {
-        private BlockingCollection<WorkItem> workItems = new BlockingCollection<WorkItem>();
+        private BlockingCollection<MarshalItem> workItems = new BlockingCollection<MarshalItem>();
 
+        protected int BoundedCapacity { get; set; }
+
+        protected AsyncCmdlet(int boundedCapacity = 50)
+        {
+            this.BoundedCapacity = Math.Max(1, boundedCapacity);
+            this.workItems = new BlockingCollection<MarshalItem>(this.BoundedCapacity);
+        }
 
         #region sealed overrides
         sealed protected override void BeginProcessing()
@@ -39,61 +46,61 @@ namespace TTRider.PowerShellAsync
         #region intercepted methods
         new public void WriteDebug([CanBeNull] string text)
         {
-            this.workItems.Add(new WorkItemAction<string> { Action = base.WriteDebug, Argument = text });
+            this.workItems.Add(new MarshalItemAction<string>(base.WriteDebug, text));
         }
 
         new public void WriteError(ErrorRecord errorRecord)
         {
-            this.workItems.Add(new WorkItemAction<ErrorRecord> { Action = base.WriteError, Argument = errorRecord });
+            this.workItems.Add(new MarshalItemAction<ErrorRecord>(base.WriteError, errorRecord));
         }
 
         new public void WriteObject(object sendToPipeline)
         {
-            this.workItems.Add(new WorkItemAction<object> { Action = base.WriteObject, Argument = sendToPipeline });
+            this.workItems.Add(new MarshalItemAction<object>(base.WriteObject, sendToPipeline));
         }
 
         new public void WriteObject(object sendToPipeline, bool enumerateCollection)
         {
-            this.workItems.Add(new WorkItemAction<object, bool> { Action = base.WriteObject, Argument1 = sendToPipeline, Argument2 = enumerateCollection });
+            this.workItems.Add(new MarshalItemAction<object, bool>(base.WriteObject, sendToPipeline, enumerateCollection));
         }
 
         new public void WriteProgress(ProgressRecord progressRecord)
         {
-            this.workItems.Add(new WorkItemAction<ProgressRecord> { Action = base.WriteProgress, Argument = progressRecord });
+            this.workItems.Add(new MarshalItemAction<ProgressRecord>(base.WriteProgress, progressRecord));
         }
 
         new public void WriteVerbose(string text)
         {
-            this.workItems.Add(new WorkItemAction<string> { Action = base.WriteVerbose, Argument = text });
+            this.workItems.Add(new MarshalItemAction<string>(base.WriteVerbose, text));
         }
 
         new public void WriteWarning(string text)
         {
-            this.workItems.Add(new WorkItemAction<string> { Action = base.WriteWarning, Argument = text });
+            this.workItems.Add(new MarshalItemAction<string>(base.WriteWarning, text));
         }
 
         new public void WriteCommandDetail(string text)
         {
-            this.workItems.Add(new WorkItemAction<string> { Action = base.WriteCommandDetail, Argument = text });
+            this.workItems.Add(new MarshalItemAction<string>(base.WriteCommandDetail, text));
         }
 
         new public bool ShouldProcess(string target)
         {
-            var workItem = new WorkItemFunc<string, bool> { Func = base.ShouldProcess, Argument = target };
+            var workItem = new MarshalItemFunc<string, bool>(base.ShouldProcess, target);
             this.workItems.Add(workItem);
             return workItem.WaitForResult();
         }
 
         new public bool ShouldProcess(string target, string action)
         {
-            var workItem = new WorkItemFunc<string, string, bool> { Func = base.ShouldProcess, Argument1 = target, Argument2 = action };
+            var workItem = new MarshalItemFunc<string, string, bool>(base.ShouldProcess, target, action);
             this.workItems.Add(workItem);
             return workItem.WaitForResult();
         }
 
         new public bool ShouldProcess(string verboseDescription, string verboseWarning, string caption)
         {
-            var workItem = new WorkItemFunc<string, string, string, bool> { Func = base.ShouldProcess, Argument1 = verboseDescription, Argument2 = verboseWarning, Argument3 = caption };
+            var workItem = new MarshalItemFunc<string, string, string, bool>(base.ShouldProcess, verboseDescription, verboseWarning, caption);
             this.workItems.Add(workItem);
             return workItem.WaitForResult();
         }
@@ -101,38 +108,39 @@ namespace TTRider.PowerShellAsync
         new public bool ShouldProcess(string verboseDescription, string verboseWarning, string caption,
             out ShouldProcessReason shouldProcessReason)
         {
-            var workItem = new WorkItemFuncOut<string, string, string, bool, ShouldProcessReason> { Func = base.ShouldProcess, Argument1 = verboseDescription, Argument2 = verboseWarning, Argument3 = caption };
+            var workItem = new MarshalItemFuncOut<string, string, string, bool, ShouldProcessReason> { Func = base.ShouldProcess, Argument1 = verboseDescription, Argument2 = verboseWarning, Argument3 = caption };
             this.workItems.Add(workItem);
             return workItem.WaitForResult(out shouldProcessReason);
         }
 
         new public bool ShouldContinue(string query, string caption)
         {
-            var workItem = new WorkItemFunc<string, string, bool> { Func = base.ShouldContinue, Argument1 = query, Argument2 = caption };
+            var workItem = new MarshalItemFunc<string, string, bool>(base.ShouldContinue, query, caption);
             this.workItems.Add(workItem);
             return workItem.WaitForResult();
         }
 
         new public bool ShouldContinue(string query, string caption, ref bool yesToAll, ref bool noToAll)
         {
-            var workItem = new WorkItemFuncRef<string, string, bool, bool, bool> { Func = base.ShouldContinue, Argument1 = query, Argument2 = caption, Argument3 = yesToAll, Argument4 = noToAll };
+            var workItem = new MarshalItemFuncRef<string, string, bool, bool, bool> { Func = base.ShouldContinue, Argument1 = query, Argument2 = caption, Argument3 = yesToAll, Argument4 = noToAll };
             this.workItems.Add(workItem);
             return workItem.WaitForResult(ref yesToAll, ref noToAll);
         }
 
         new public bool TransactionAvailable()
         {
-            var workItem = new WorkItemFunc<bool> { Func = base.TransactionAvailable };
+            var workItem = new MarshalItemFunc<bool>(base.TransactionAvailable);
             this.workItems.Add(workItem);
             return workItem.WaitForResult();
         }
 
         new public void ThrowTerminatingError(ErrorRecord errorRecord)
         {
-            this.workItems.Add(new WorkItemAction<ErrorRecord> { Action = base.ThrowTerminatingError, Argument = errorRecord });
+            this.workItems.Add(new MarshalItemAction<ErrorRecord>(base.ThrowTerminatingError, errorRecord));
         }
         #endregion
 
+        #region async processing methods
         [NotNull]
         protected virtual Task BeginProcessingAsync()
         {
@@ -157,85 +165,45 @@ namespace TTRider.PowerShellAsync
             return Task.FromResult(0);
         }
 
+        #endregion async processing methods
+
         private void Async([NotNull] Func<Task> handler)
         {
+            this.workItems = new BlockingCollection<MarshalItem>(this.BoundedCapacity);
+
+            var task = handler();
+            if (task != null)
+            {
+                var waitable = task.ContinueWith(t => this.workItems.CompleteAdding());
+
+                foreach (var item in this.workItems.GetConsumingEnumerable())
+                {
+                    item.Invoke();
+                }
+
+                waitable.Wait();
+            }
         }
 
+        #region items
 
-        abstract class WorkItem
+        abstract class MarshalItem
         {
             internal abstract void Invoke();
         }
-
-        class WorkItemAction<T> : WorkItem
+        abstract class MarshalItemFuncBase<TRet> : MarshalItem
         {
-            [NotNull]
-            public Action<T> Action { get; set; }
-            public T Argument { get; set; }
-
-            internal override void Invoke()
-            {
-                this.Action(this.Argument);
-            }
-        }
-
-        class WorkItemAction<T1, T2> : WorkItem
-        {
-            [NotNull]
-            public Action<T1, T2> Action { get; set; }
-            public T1 Argument1 { get; set; }
-            public T2 Argument2 { get; set; }
-
-            internal override void Invoke()
-            {
-                this.Action(this.Argument1, this.Argument2);
-            }
-        }
-
-        class WorkItemFunc<T> : WorkItem
-        {
-            private T retVal;
-            private readonly Task<T> retValTask;
-
-            internal WorkItemFunc()
-            {
-                this.retValTask = new Task<T>(() => this.retVal);
-            }
-
-            [NotNull]
-            public Func<T> Func { get; set; }
-
-            internal override void Invoke()
-            {
-                this.retVal = this.Func();
-                this.retValTask.Start();
-            }
-
-            public T WaitForResult()
-            {
-                this.retValTask.Wait();
-                return this.retValTask.Result;
-            }
-        }
-
-        class WorkItemFunc<T, TRet> : WorkItem
-        {
-            public T Argument { get; set; }
-
             private TRet retVal;
             private readonly Task<TRet> retValTask;
 
-            internal WorkItemFunc()
+            protected MarshalItemFuncBase()
             {
                 this.retValTask = new Task<TRet>(() => this.retVal);
             }
 
-            [NotNull]
-            public Func<T, TRet> Func { get; set; }
-
-            internal override void Invoke()
+            sealed internal override void Invoke()
             {
-                this.retVal = this.Func(this.Argument);
+                this.retVal = this.InvokeFunc();
                 this.retValTask.Start();
             }
 
@@ -244,68 +212,113 @@ namespace TTRider.PowerShellAsync
                 this.retValTask.Wait();
                 return this.retValTask.Result;
             }
+
+            internal abstract TRet InvokeFunc();
         }
-
-        class WorkItemFunc<T1, T2, TRet> : WorkItem
+        class MarshalItemAction<T> : MarshalItem
         {
-            public T1 Argument1 { get; set; }
-            public T2 Argument2 { get; set; }
+            private readonly Action<T> action;
+            private readonly T arg1;
 
-            private TRet retVal;
-            private readonly Task<TRet> retValTask;
-
-            internal WorkItemFunc()
+            public MarshalItemAction(Action<T> action, T arg1)
             {
-                this.retValTask = new Task<TRet>(() => this.retVal);
+                this.action = action;
+                this.arg1 = arg1;
             }
-
-            [NotNull]
-            public Func<T1, T2, TRet> Func { get; set; }
 
             internal override void Invoke()
             {
-                this.retVal = this.Func(this.Argument1, this.Argument2);
-                this.retValTask.Start();
-            }
-
-            public TRet WaitForResult()
-            {
-                this.retValTask.Wait();
-                return this.retValTask.Result;
+                this.action(this.arg1);
             }
         }
-
-        class WorkItemFunc<T1, T2, T3, TRet> : WorkItem
+        class MarshalItemAction<T1, T2> : MarshalItem
         {
-            public T1 Argument1 { get; set; }
-            public T2 Argument2 { get; set; }
-            public T3 Argument3 { get; set; }
+            private readonly Action<T1, T2> action;
+            private readonly T1 arg1;
+            private readonly T2 arg2;
 
-            private TRet retVal;
-            private readonly Task<TRet> retValTask;
-
-            internal WorkItemFunc()
+            public MarshalItemAction(Action<T1, T2> action, T1 arg1, T2 arg2)
             {
-                this.retValTask = new Task<TRet>(() => this.retVal);
+                this.action = action;
+                this.arg1 = arg1;
+                this.arg2 = arg2;
             }
-
-            [NotNull]
-            public Func<T1, T2, T3, TRet> Func { get; set; }
-
             internal override void Invoke()
             {
-                this.retVal = this.Func(this.Argument1, this.Argument2, this.Argument3);
-                this.retValTask.Start();
+                this.action(this.arg1, this.arg2);
+            }
+        }
+        class MarshalItemFunc<TRet> : MarshalItemFuncBase<TRet>
+        {
+            private readonly Func<TRet> func;
+
+            public MarshalItemFunc(Func<TRet> func)
+            {
+                this.func = func;
             }
 
-            public TRet WaitForResult()
+            internal override TRet InvokeFunc()
             {
-                this.retValTask.Wait();
-                return this.retValTask.Result;
+                return this.func();
+            }
+        }
+        class MarshalItemFunc<T1, TRet> : MarshalItemFuncBase<TRet>
+        {
+            private readonly Func<T1, TRet> func;
+            private readonly T1 arg1;
+
+            public MarshalItemFunc(Func<T1, TRet> func, T1 arg1)
+            {
+                this.func = func;
+                this.arg1 = arg1;
+            }
+
+            internal override TRet InvokeFunc()
+            {
+                return this.func(this.arg1);
+            }
+        }
+        class MarshalItemFunc<T1, T2, TRet> : MarshalItemFuncBase<TRet>
+        {
+            private readonly Func<T1, T2, TRet> func;
+            private readonly T1 arg1;
+            private readonly T2 arg2;
+
+            public MarshalItemFunc(Func<T1, T2, TRet> func, T1 arg1, T2 arg2)
+            {
+                this.func = func;
+                this.arg1 = arg1;
+                this.arg2 = arg2;
+            }
+
+            internal override TRet InvokeFunc()
+            {
+                return this.func(this.arg1, this.arg2);
+            }
+        }
+        class MarshalItemFunc<T1, T2, T3, TRet> : MarshalItemFuncBase<TRet>
+        {
+            private readonly Func<T1, T2, T3, TRet> func;
+            private readonly T1 arg1;
+            private readonly T2 arg2;
+            private readonly T3 arg3;
+
+            public MarshalItemFunc(Func<T1, T2, T3, TRet> func, T1 arg1, T2 arg2, T3 arg3)
+            {
+                this.func = func;
+                this.arg1 = arg1;
+                this.arg2 = arg2;
+                this.arg3 = arg3;
+            }
+
+            internal override TRet InvokeFunc()
+            {
+                return this.func(this.arg1, this.arg2, this.arg3);
             }
         }
 
-        class WorkItemFuncOut<T1, T2, T3, TRet, TOut> : WorkItem
+
+        class MarshalItemFuncOut<T1, T2, T3, TRet, TOut> : MarshalItem
         {
             public delegate TRet FuncOut(T1 t1, T2 t2, T3 t3, out TOut tout);
 
@@ -317,7 +330,7 @@ namespace TTRider.PowerShellAsync
             private TOut outVal;
             private readonly Task<TRet> retValTask;
 
-            internal WorkItemFuncOut()
+            internal MarshalItemFuncOut()
             {
                 this.retValTask = new Task<TRet>(() => this.retVal);
             }
@@ -340,7 +353,7 @@ namespace TTRider.PowerShellAsync
         }
 
 
-        class WorkItemFuncRef<T1, T2, TRet, TRef1, TRef2> : WorkItem
+        class MarshalItemFuncRef<T1, T2, TRet, TRef1, TRef2> : MarshalItem
         {
             public delegate TRet FuncRef(T1 t1, T2 t2, ref TRef1 tref1, ref TRef2 tref2);
 
@@ -354,7 +367,7 @@ namespace TTRider.PowerShellAsync
             private TRef2 argument4;
             private readonly Task<TRet> retValTask;
 
-            internal WorkItemFuncRef()
+            internal MarshalItemFuncRef()
             {
                 this.retValTask = new Task<TRet>(() => this.retVal);
             }
@@ -376,6 +389,6 @@ namespace TTRider.PowerShellAsync
                 return this.retValTask.Result;
             }
         }
-
+        #endregion items
     }
 }

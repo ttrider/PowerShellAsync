@@ -6,8 +6,8 @@
     <ProjectGuid>{C0C70598-5BD7-4D71-944B-7CC8D2DFDA17}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UnitTests</RootNamespace>
-    <AssemblyName>UnitTests</AssemblyName>
+    <RootNamespace>TTRider.PowerShellAsync.UnitTests</RootNamespace>
+    <AssemblyName>TTRider.PowerShellAsync.UnitTests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -54,8 +54,12 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="AsyncCmdletTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Infrastructure\PsCommandContext.cs" />
+    <Compile Include="Infrastructure\TestPsHostRawUserInterface.cs" />
+    <Compile Include="Infrastructure\TestPsHost.cs" />
+    <Compile Include="Infrastructure\TestPsHostUserInterface.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PowerShellAsync\PowerShellAsync.csproj">
