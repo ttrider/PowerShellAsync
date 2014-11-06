@@ -9,12 +9,18 @@ With 3 easy steps you can take advantage of the async programming:
  
 1. Install PowerShellAsync from nuget.org
   * ``PM> Install-Package PowerShellAsync``
+
+
 2. Replace base class of your Cmdlet from _PSCmdlet_ to _AsyncCmdlet_
   * ``[Cmdlet("Test", "SomethingCool")]
-      public class TestSomethingCool : ``__``AsyncCmdlet``__
+      public class TestSomethingCool : AsyncCmdlet``
+
+
 3. Replace BeginProcessing/ProcessRecord/EndProcessing methods with their xxxAsync counterparts
-  * ``protected override`` __``async Task``__ ``ProcessRecord``__``Async``__``()``
-3. Enjoy!!!
+  * ``protected override async Task ProcessRecordAsync()``
+
+
+4. Enjoy!!!
 
 
 
