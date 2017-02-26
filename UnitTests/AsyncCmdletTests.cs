@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TTRider.PowerShellAsync.UnitTests.Infrastructure;
@@ -109,6 +110,20 @@ namespace TTRider.PowerShellAsync.UnitTests
             Assert.AreEqual(1, context.ProgressRecords.Count);
 
         }
+
+        [TestMethod]
+        public void SynchronizationContext()
+        {
+            var context = new PsCommandContext();
+            var output = RunCommand(ps => ps.AddCommand("Test-TTRiderPSSynchronisationContext"), context);
+
+            Assert.AreEqual(2, output.Count);
+
+            var initialProcessId = output[0];
+            var finalProcessId = output[1];
+
+            Assert.AreEqual(initialProcessId.ToString(), finalProcessId.ToString());
+        }
     }
 
 
@@ -204,6 +219,19 @@ namespace TTRider.PowerShellAsync.UnitTests
                 this.WriteVerbose("WriteVerbose");
                 this.WriteWarning("WriteWarning");
             });
+        }
+    }
+
+    [Cmdlet("Test", "TTRiderPSSynchronisationContext")]
+    public class TestSynchronisationContext : AsyncCmdlet
+    {
+        protected override async Task ProcessRecordAsync()
+        {
+            this.WriteObject(Thread.CurrentThread.ManagedThreadId);
+
+            await Task.Delay(1);
+
+            this.WriteObject(Thread.CurrentThread.ManagedThreadId);
         }
     }
 }
