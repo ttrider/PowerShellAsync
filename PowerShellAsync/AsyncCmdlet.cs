@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Management.Automation;
+using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 
@@ -11,135 +13,133 @@ namespace TTRider.PowerShellAsync
     /// </summary>
     public abstract class AsyncCmdlet : PSCmdlet
     {
-        private BlockingCollection<MarshalItem> workItems = new BlockingCollection<MarshalItem>();
-
         protected int BoundedCapacity { get; set; }
 
         protected AsyncCmdlet(int boundedCapacity = 50)
         {
             this.BoundedCapacity = Math.Max(1, boundedCapacity);
-            this.workItems = new BlockingCollection<MarshalItem>(this.BoundedCapacity);
         }
 
         #region sealed overrides
-        sealed protected override void BeginProcessing()
+        protected sealed override void BeginProcessing()
         {
-            Async(BeginProcessingAsync);
+            AsyncCmdletSynchronizationContext.Async(BeginProcessingAsync, BoundedCapacity);
         }
 
-        sealed protected override void ProcessRecord()
+        protected sealed override void ProcessRecord()
         {
-            Async(ProcessRecordAsync);
+            AsyncCmdletSynchronizationContext.Async(ProcessRecordAsync, BoundedCapacity);
         }
 
-        sealed protected override void EndProcessing()
+        protected sealed override void EndProcessing()
         {
-            Async(EndProcessingAsync);
+            AsyncCmdletSynchronizationContext.Async(EndProcessingAsync, BoundedCapacity);
         }
 
-        sealed protected override void StopProcessing()
+        protected sealed override void StopProcessing()
         {
-            Async(StopProcessingAsync);
+            AsyncCmdletSynchronizationContext.Async(StopProcessingAsync, BoundedCapacity);
         }
+
         #endregion sealed overrides
 
         #region intercepted methods
-        new public void WriteDebug([CanBeNull] string text)
+        public new void WriteDebug([CanBeNull] string text)
         {
-            this.workItems.Add(new MarshalItemAction<string>(base.WriteDebug, text));
+            AsyncCmdletSynchronizationContext.PostItem(new MarshalItemAction<string>(base.WriteDebug, text));
         }
 
-        new public void WriteError([NotNull] ErrorRecord errorRecord)
+        public new void WriteError([NotNull] ErrorRecord errorRecord)
         {
-            this.workItems.Add(new MarshalItemAction<ErrorRecord>(base.WriteError, errorRecord));
+            AsyncCmdletSynchronizationContext.PostItem(new MarshalItemAction<ErrorRecord>(base.WriteError, errorRecord));
         }
 
-        new public void WriteObject([CanBeNull] object sendToPipeline)
+        public new void WriteObject([CanBeNull] object sendToPipeline)
         {
-            this.workItems.Add(new MarshalItemAction<object>(base.WriteObject, sendToPipeline));
+            AsyncCmdletSynchronizationContext.PostItem(new MarshalItemAction<object>(base.WriteObject, sendToPipeline));
         }
 
-        new public void WriteObject([CanBeNull] object sendToPipeline, bool enumerateCollection)
+        public new void WriteObject([CanBeNull] object sendToPipeline, bool enumerateCollection)
         {
-            this.workItems.Add(new MarshalItemAction<object, bool>(base.WriteObject, sendToPipeline, enumerateCollection));
+            AsyncCmdletSynchronizationContext.PostItem(new MarshalItemAction<object, bool>(base.WriteObject, sendToPipeline, enumerateCollection));
         }
 
-        new public void WriteProgress([NotNull] ProgressRecord progressRecord)
+        public new void WriteProgress([NotNull] ProgressRecord progressRecord)
         {
-            this.workItems.Add(new MarshalItemAction<ProgressRecord>(base.WriteProgress, progressRecord));
+            AsyncCmdletSynchronizationContext.PostItem(new MarshalItemAction<ProgressRecord>(base.WriteProgress, progressRecord));
         }
 
-        new public void WriteVerbose([NotNull] string text)
+        public new void WriteVerbose([NotNull] string text)
         {
-            this.workItems.Add(new MarshalItemAction<string>(base.WriteVerbose, text));
+            AsyncCmdletSynchronizationContext.PostItem(new MarshalItemAction<string>(base.WriteVerbose, text));
         }
 
-        new public void WriteWarning([NotNull] string text)
+        public new void WriteWarning([NotNull] string text)
         {
-            this.workItems.Add(new MarshalItemAction<string>(base.WriteWarning, text));
+            AsyncCmdletSynchronizationContext.PostItem(new MarshalItemAction<string>(base.WriteWarning, text));
         }
 
-        new public void WriteCommandDetail([NotNull] string text)
+        public new void WriteCommandDetail([NotNull] string text)
         {
-            this.workItems.Add(new MarshalItemAction<string>(base.WriteCommandDetail, text));
+            AsyncCmdletSynchronizationContext.PostItem(new MarshalItemAction<string>(base.WriteCommandDetail, text));
         }
 
-        new public bool ShouldProcess([NotNull] string target)
+        public new bool ShouldProcess([NotNull] string target)
         {
             var workItem = new MarshalItemFunc<string, bool>(base.ShouldProcess, target);
-            this.workItems.Add(workItem);
+            AsyncCmdletSynchronizationContext.PostItem(workItem);
             return workItem.WaitForResult();
         }
 
-        new public bool ShouldProcess([NotNull] string target, [NotNull] string action)
+        public new bool ShouldProcess([NotNull] string target, [NotNull] string action)
         {
             var workItem = new MarshalItemFunc<string, string, bool>(base.ShouldProcess, target, action);
-            this.workItems.Add(workItem);
+            AsyncCmdletSynchronizationContext.PostItem(workItem);
             return workItem.WaitForResult();
         }
 
-        new public bool ShouldProcess([NotNull] string verboseDescription, [NotNull] string verboseWarning, [NotNull] string caption)
+        public new bool ShouldProcess([NotNull] string verboseDescription, [NotNull] string verboseWarning, [NotNull] string caption)
         {
             var workItem = new MarshalItemFunc<string, string, string, bool>(base.ShouldProcess, verboseDescription,
                 verboseWarning, caption);
-            this.workItems.Add(workItem);
+            AsyncCmdletSynchronizationContext.PostItem(workItem);
             return workItem.WaitForResult();
         }
 
-        new public bool ShouldProcess([NotNull] string verboseDescription, [NotNull] string verboseWarning, [NotNull] string caption,
+        public new bool ShouldProcess([NotNull] string verboseDescription, [NotNull] string verboseWarning, [NotNull] string caption,
             out ShouldProcessReason shouldProcessReason)
         {
             var workItem = new MarshalItemFuncOut<string, string, string, bool, ShouldProcessReason>(
                 base.ShouldProcess, verboseDescription, verboseWarning, caption);
-            this.workItems.Add(workItem);
+            AsyncCmdletSynchronizationContext.PostItem(workItem);
             return workItem.WaitForResult(out shouldProcessReason);
         }
 
-        new public bool ShouldContinue([NotNull] string query, [NotNull] string caption)
+        public new bool ShouldContinue([NotNull] string query, [NotNull] string caption)
         {
             var workItem = new MarshalItemFunc<string, string, bool>(base.ShouldContinue, query, caption);
-            this.workItems.Add(workItem);
+            AsyncCmdletSynchronizationContext.PostItem(workItem);
             return workItem.WaitForResult();
         }
 
-        new public bool ShouldContinue([NotNull] string query, [NotNull] string caption, ref bool yesToAll, ref bool noToAll)
+        public new bool ShouldContinue([NotNull] string query, [NotNull] string caption, ref bool yesToAll, ref bool noToAll)
         {
             var workItem = new MarshalItemFuncRef<string, string, bool, bool, bool>(base.ShouldContinue, query, caption,
                 yesToAll, noToAll);
-            this.workItems.Add(workItem);
+            AsyncCmdletSynchronizationContext.PostItem(workItem);
             return workItem.WaitForResult(ref yesToAll, ref noToAll);
         }
 
-        new public bool TransactionAvailable()
+        public new bool TransactionAvailable()
         {
             var workItem = new MarshalItemFunc<bool>(base.TransactionAvailable);
-            this.workItems.Add(workItem);
+            AsyncCmdletSynchronizationContext.PostItem(workItem);
             return workItem.WaitForResult();
         }
 
-        new public void ThrowTerminatingError([NotNull] ErrorRecord errorRecord)
+        public new void ThrowTerminatingError([NotNull] ErrorRecord errorRecord)
         {
-            this.workItems.Add(new MarshalItemAction<ErrorRecord>(base.ThrowTerminatingError, errorRecord));
+            AsyncCmdletSynchronizationContext.PostItem(new MarshalItemAction<ErrorRecord>(base.ThrowTerminatingError, errorRecord));
         }
 
         #endregion
@@ -171,29 +171,109 @@ namespace TTRider.PowerShellAsync
 
         #endregion async processing methods
 
-        private void Async([NotNull] Func<Task> handler)
+        private class AsyncCmdletSynchronizationContext : SynchronizationContext, IDisposable
         {
-            this.workItems = new BlockingCollection<MarshalItem>(this.BoundedCapacity);
+            private BlockingCollection<MarshalItem> _workItems;
+            private static AsyncCmdletSynchronizationContext _currentAsyncCmdletContext;
 
-            var task = handler();
-            if (task != null)
+            private AsyncCmdletSynchronizationContext(int boundedCapacity)
             {
-                var waitable = task.ContinueWith(t => this.workItems.CompleteAdding());
+                _workItems = new BlockingCollection<MarshalItem>(boundedCapacity);
+            }
 
-                foreach (var item in this.workItems.GetConsumingEnumerable())
+            public static void Async([NotNull] Func<Task> handler, int boundedCapacity)
+            {
+                var previousContext = SynchronizationContext.Current;
+
+                try
                 {
-                    item.Invoke();
+                    using (var synchronizationContext = new AsyncCmdletSynchronizationContext(boundedCapacity))
+                    {
+                        SetSynchronizationContext(synchronizationContext);
+                        _currentAsyncCmdletContext = synchronizationContext;
+
+                        var task = handler();
+                        if (task == null)
+                        {
+                            return;
+                        }
+
+                        var waitable = task.ContinueWith(t => synchronizationContext.Complete(), scheduler: TaskScheduler.Default);
+
+                        synchronizationContext.ProcessQueue();
+
+                        waitable.GetAwaiter().GetResult();
+                    }
+                }
+                finally
+                {
+                    SetSynchronizationContext(previousContext);
+                    _currentAsyncCmdletContext = previousContext as AsyncCmdletSynchronizationContext;
+                }
+            }
+
+            internal static void PostItem(MarshalItem item)
+            {
+                _currentAsyncCmdletContext.Post(item);
+            }
+
+            public void Dispose()
+            {
+                if (_workItems != null)
+                {
+                    _workItems.Dispose();
+                    _workItems = null;
+                }
+            }
+
+            private void EnsureNotDisposed()
+            {
+                if (_workItems == null)
+                {
+                    throw new ObjectDisposedException(nameof(AsyncCmdletSynchronizationContext));
+                }
+            }
+
+            private void Complete()
+            {
+                EnsureNotDisposed();
+
+                _workItems.CompleteAdding();
+            }
+
+            private void ProcessQueue()
+            {
+                MarshalItem workItem;
+                while (_workItems.TryTake(out workItem, Timeout.Infinite))
+                {
+                    workItem.Invoke();
+                }
+            }
+
+            public override void Post(SendOrPostCallback callback, object state)
+            {
+                if (callback == null)
+                {
+                    throw new ArgumentNullException(nameof(callback));
                 }
 
-                waitable.Wait();
+                Post(new MarshalItemAction<object>(s => callback(s), state));
+            }
+
+            private void Post(MarshalItem item)
+            {
+                EnsureNotDisposed();
+
+                _workItems.Add(item);
             }
         }
 
         #region items
-        abstract class MarshalItem
+        internal abstract class MarshalItem
         {
             internal abstract void Invoke();
         }
+
         abstract class MarshalItemFuncBase<TRet> : MarshalItem
         {
             private TRet retVal;
@@ -204,7 +284,7 @@ namespace TTRider.PowerShellAsync
                 this.retValTask = new Task<TRet>(() => this.retVal);
             }
 
-            sealed internal override void Invoke()
+            internal sealed override void Invoke()
             {
                 this.retVal = this.InvokeFunc();
                 this.retValTask.Start();
