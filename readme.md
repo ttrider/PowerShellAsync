@@ -27,6 +27,7 @@ With 3 easy steps you can take advantage of the async programming:
 ## Contributors
 
   * [Vladimir Yangurskiy](https://github.com/ttrider) 
+  * [pgrefviau](https://github.com/pgrefviau) 
 
 # Installation
 
