@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>TTRider.PowerShellAsync.dll</id>
-    <version>1.0.0.0</version>
+    <version>1.0.1.0</version>
     <authors>TTRider</authors>
     <owners>TTRider</owners>
     <licenseUrl>https://github.com/ttrider/powershellasync/blob/master/LICENSE</licenseUrl>
@@ -10,10 +10,12 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Base class for async-supported PowerShell cmdlets.</description>
     <releaseNotes>
+      1.0.1.0
+      * Bug fixes
       1.0.0.0
       * Initial Release
     </releaseNotes>
-    <copyright>Copyright (C) 2014 TTRider, L.L.C.</copyright>
+    <copyright>Copyright (C) 2014 - 2017 TTRider, L.L.C.</copyright>
     <tags>PowerShell</tags>
     <dependencies>
       <dependency id="System.Management.Automation" version="1.0" />
