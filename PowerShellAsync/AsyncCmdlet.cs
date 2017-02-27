@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Management.Automation;
 using System.Threading;
 using System.Threading.Tasks;
@@ -173,12 +172,12 @@ namespace TTRider.PowerShellAsync
 
         private class AsyncCmdletSynchronizationContext : SynchronizationContext, IDisposable
         {
-            private BlockingCollection<MarshalItem> _workItems;
-            private static AsyncCmdletSynchronizationContext _currentAsyncCmdletContext;
+            private BlockingCollection<MarshalItem> workItems;
+            private static AsyncCmdletSynchronizationContext currentAsyncCmdletContext;
 
             private AsyncCmdletSynchronizationContext(int boundedCapacity)
             {
-                _workItems = new BlockingCollection<MarshalItem>(boundedCapacity);
+                this.workItems = new BlockingCollection<MarshalItem>(boundedCapacity);
             }
 
             public static void Async([NotNull] Func<Task> handler, int boundedCapacity)
@@ -190,7 +189,7 @@ namespace TTRider.PowerShellAsync
                     using (var synchronizationContext = new AsyncCmdletSynchronizationContext(boundedCapacity))
                     {
                         SetSynchronizationContext(synchronizationContext);
-                        _currentAsyncCmdletContext = synchronizationContext;
+                        currentAsyncCmdletContext = synchronizationContext;
 
                         var task = handler();
                         if (task == null)
@@ -208,27 +207,27 @@ namespace TTRider.PowerShellAsync
                 finally
                 {
                     SetSynchronizationContext(previousContext);
-                    _currentAsyncCmdletContext = previousContext as AsyncCmdletSynchronizationContext;
+                    currentAsyncCmdletContext = previousContext as AsyncCmdletSynchronizationContext;
                 }
             }
 
             internal static void PostItem(MarshalItem item)
             {
-                _currentAsyncCmdletContext.Post(item);
+                currentAsyncCmdletContext.Post(item);
             }
 
             public void Dispose()
             {
-                if (_workItems != null)
+                if (this.workItems != null)
                 {
-                    _workItems.Dispose();
-                    _workItems = null;
+                    this.workItems.Dispose();
+                    this.workItems = null;
                 }
             }
 
             private void EnsureNotDisposed()
             {
-                if (_workItems == null)
+                if (this.workItems == null)
                 {
                     throw new ObjectDisposedException(nameof(AsyncCmdletSynchronizationContext));
                 }
@@ -238,13 +237,13 @@ namespace TTRider.PowerShellAsync
             {
                 EnsureNotDisposed();
 
-                _workItems.CompleteAdding();
+                this.workItems.CompleteAdding();
             }
 
             private void ProcessQueue()
             {
                 MarshalItem workItem;
-                while (_workItems.TryTake(out workItem, Timeout.Infinite))
+                while (this.workItems.TryTake(out workItem, Timeout.Infinite))
                 {
                     workItem.Invoke();
                 }
@@ -264,7 +263,7 @@ namespace TTRider.PowerShellAsync
             {
                 EnsureNotDisposed();
 
-                _workItems.Add(item);
+                this.workItems.Add(item);
             }
         }
 
