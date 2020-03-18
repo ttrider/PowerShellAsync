@@ -55,3 +55,7 @@ Temporary Items
 /PowerShellAsyncExample/packages
 /PowerShellAsyncExample/PowerShellAsyncExample/bin/Debug
 /PowerShellAsyncExample/PowerShellAsyncExample/obj/Debug
+
+# Visual Studio 2015/2017 cache/options directory
+.vs/
+.vscode/
