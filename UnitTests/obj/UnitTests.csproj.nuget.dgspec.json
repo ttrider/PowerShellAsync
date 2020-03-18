@@ -1,0 +1,174 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\tig\\s\\PowershellAsync\\UnitTests\\UnitTests.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\tig\\s\\PowershellAsync\\PowershellAsync\\PowershellAsync.csproj": {
+      "version": "1.1.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\tig\\s\\PowershellAsync\\PowershellAsync\\PowershellAsync.csproj",
+        "projectName": "PowerShellAsync",
+        "projectPath": "C:\\Users\\tig\\s\\PowershellAsync\\PowershellAsync\\PowershellAsync.csproj",
+        "packagesPath": "C:\\Users\\tig\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\tig\\s\\PowershellAsync\\PowershellAsync\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\tig\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
+          "dependencies": {
+            "System.Management.Automation": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.200\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\tig\\s\\PowershellAsync\\UnitTests\\UnitTests.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\tig\\s\\PowershellAsync\\UnitTests\\UnitTests.csproj",
+        "projectName": "UnitTests",
+        "projectPath": "C:\\Users\\tig\\s\\PowershellAsync\\UnitTests\\UnitTests.csproj",
+        "packagesPath": "C:\\Users\\tig\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\tig\\s\\PowershellAsync\\UnitTests\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\tig\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "projectReferences": {
+              "C:\\Users\\tig\\s\\PowershellAsync\\PowershellAsync\\PowershellAsync.csproj": {
+                "projectPath": "C:\\Users\\tig\\s\\PowershellAsync\\PowershellAsync\\PowershellAsync.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
+          "dependencies": {
+            "MSTest.TestAdapter": {
+              "target": "Package",
+              "version": "[2.1.0, )"
+            },
+            "MSTest.TestFramework": {
+              "target": "Package",
+              "version": "[2.1.0, )"
+            },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[16.5.0, )"
+            },
+            "Microsoft.PowerShell.Commands.Diagnostics": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "Microsoft.PowerShell.Commands.Management": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "Microsoft.PowerShell.Commands.Utility": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "Microsoft.PowerShell.ConsoleHost": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "Microsoft.WSMan.Management": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "System.Management.Automation": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "coverlet.collector": {
+              "target": "Package",
+              "version": "[1.2.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.200\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
