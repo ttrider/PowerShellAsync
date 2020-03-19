@@ -1,4 +1,6 @@
-#PowerShellAsync
+![.NET Core](https://github.com/ttrider/PowerShellAsync/workflows/.NET%20Core/badge.svg?branch=master)
+
+# PowerShellAsync
 base class for async-enabled PowerShell Cmdlets.
 
 When you build PowerShell Cmdlets, it is required that calls to WriteObject, WriteVerbose, WriteWarning, etc be originated from BeginProcessing/ProcessRecord/EndProcessing method on __the main thread__!.
