@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Management.Automation;
 using System.Threading;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
+//using JetBrains.Annotations;
 
 namespace TTRider.PowerShellAsync
 {
@@ -43,61 +43,61 @@ namespace TTRider.PowerShellAsync
         #endregion sealed overrides
 
         #region intercepted methods
-        public new void WriteDebug([CanBeNull] string text)
+        public new void WriteDebug(string text)
         {
             AsyncCmdletSynchronizationContext.PostItem(new MarshalItemAction<string>(base.WriteDebug, text));
         }
 
-        public new void WriteError([NotNull] ErrorRecord errorRecord)
+        public new void WriteError(ErrorRecord errorRecord)
         {
             AsyncCmdletSynchronizationContext.PostItem(new MarshalItemAction<ErrorRecord>(base.WriteError, errorRecord));
         }
 
-        public new void WriteObject([CanBeNull] object sendToPipeline)
+        public new void WriteObject(object sendToPipeline)
         {
             AsyncCmdletSynchronizationContext.PostItem(new MarshalItemAction<object>(base.WriteObject, sendToPipeline));
         }
 
-        public new void WriteObject([CanBeNull] object sendToPipeline, bool enumerateCollection)
+        public new void WriteObject(object sendToPipeline, bool enumerateCollection)
         {
             AsyncCmdletSynchronizationContext.PostItem(new MarshalItemAction<object, bool>(base.WriteObject, sendToPipeline, enumerateCollection));
         }
 
-        public new void WriteProgress([NotNull] ProgressRecord progressRecord)
+        public new void WriteProgress(ProgressRecord progressRecord)
         {
             AsyncCmdletSynchronizationContext.PostItem(new MarshalItemAction<ProgressRecord>(base.WriteProgress, progressRecord));
         }
 
-        public new void WriteVerbose([NotNull] string text)
+        public new void WriteVerbose(string text)
         {
             AsyncCmdletSynchronizationContext.PostItem(new MarshalItemAction<string>(base.WriteVerbose, text));
         }
 
-        public new void WriteWarning([NotNull] string text)
+        public new void WriteWarning(string text)
         {
             AsyncCmdletSynchronizationContext.PostItem(new MarshalItemAction<string>(base.WriteWarning, text));
         }
 
-        public new void WriteCommandDetail([NotNull] string text)
+        public new void WriteCommandDetail(string text)
         {
             AsyncCmdletSynchronizationContext.PostItem(new MarshalItemAction<string>(base.WriteCommandDetail, text));
         }
 
-        public new bool ShouldProcess([NotNull] string target)
+        public new bool ShouldProcess(string target)
         {
             var workItem = new MarshalItemFunc<string, bool>(base.ShouldProcess, target);
             AsyncCmdletSynchronizationContext.PostItem(workItem);
             return workItem.WaitForResult();
         }
 
-        public new bool ShouldProcess([NotNull] string target, [NotNull] string action)
+        public new bool ShouldProcess(string target, string action)
         {
             var workItem = new MarshalItemFunc<string, string, bool>(base.ShouldProcess, target, action);
             AsyncCmdletSynchronizationContext.PostItem(workItem);
             return workItem.WaitForResult();
         }
 
-        public new bool ShouldProcess([NotNull] string verboseDescription, [NotNull] string verboseWarning, [NotNull] string caption)
+        public new bool ShouldProcess(string verboseDescription, string verboseWarning, string caption)
         {
             var workItem = new MarshalItemFunc<string, string, string, bool>(base.ShouldProcess, verboseDescription,
                 verboseWarning, caption);
@@ -105,7 +105,7 @@ namespace TTRider.PowerShellAsync
             return workItem.WaitForResult();
         }
 
-        public new bool ShouldProcess([NotNull] string verboseDescription, [NotNull] string verboseWarning, [NotNull] string caption,
+        public new bool ShouldProcess(string verboseDescription, string verboseWarning, string caption,
             out ShouldProcessReason shouldProcessReason)
         {
             var workItem = new MarshalItemFuncOut<string, string, string, bool, ShouldProcessReason>(
@@ -114,14 +114,14 @@ namespace TTRider.PowerShellAsync
             return workItem.WaitForResult(out shouldProcessReason);
         }
 
-        public new bool ShouldContinue([NotNull] string query, [NotNull] string caption)
+        public new bool ShouldContinue(string query, string caption)
         {
             var workItem = new MarshalItemFunc<string, string, bool>(base.ShouldContinue, query, caption);
             AsyncCmdletSynchronizationContext.PostItem(workItem);
             return workItem.WaitForResult();
         }
 
-        public new bool ShouldContinue([NotNull] string query, [NotNull] string caption, ref bool yesToAll, ref bool noToAll)
+        public new bool ShouldContinue(string query, string caption, ref bool yesToAll, ref bool noToAll)
         {
             var workItem = new MarshalItemFuncRef<string, string, bool, bool, bool>(base.ShouldContinue, query, caption,
                 yesToAll, noToAll);
@@ -136,7 +136,7 @@ namespace TTRider.PowerShellAsync
             return workItem.WaitForResult();
         }
 
-        public new void ThrowTerminatingError([NotNull] ErrorRecord errorRecord)
+        public new void ThrowTerminatingError(ErrorRecord errorRecord)
         {
             AsyncCmdletSynchronizationContext.PostItem(new MarshalItemAction<ErrorRecord>(base.ThrowTerminatingError, errorRecord));
         }
@@ -144,25 +144,25 @@ namespace TTRider.PowerShellAsync
         #endregion
 
         #region async processing methods
-        [NotNull]
+        
         protected virtual Task BeginProcessingAsync()
         {
             return Task.FromResult(0);
         }
 
-        [NotNull]
+        
         protected virtual Task EndProcessingAsync()
         {
             return Task.FromResult(0);
         }
 
-        [NotNull]
+        
         protected virtual Task ProcessRecordAsync()
         {
             return Task.FromResult(0);
         }
 
-        [NotNull]
+        
         protected virtual Task StopProcessingAsync()
         {
             return Task.FromResult(0);
@@ -180,7 +180,7 @@ namespace TTRider.PowerShellAsync
                 this.workItems = new BlockingCollection<MarshalItem>(boundedCapacity);
             }
 
-            public static void Async([NotNull] Func<Task> handler, int boundedCapacity)
+            public static void Async(Func<Task> handler, int boundedCapacity)
             {
                 var previousContext = SynchronizationContext.Current;
 
@@ -302,7 +302,7 @@ namespace TTRider.PowerShellAsync
             private readonly Action<T> action;
             private readonly T arg1;
 
-            internal MarshalItemAction([NotNull] Action<T> action, T arg1)
+            internal MarshalItemAction(Action<T> action, T arg1)
             {
                 this.action = action;
                 this.arg1 = arg1;
@@ -319,7 +319,7 @@ namespace TTRider.PowerShellAsync
             private readonly T1 arg1;
             private readonly T2 arg2;
 
-            internal MarshalItemAction([NotNull] Action<T1, T2> action, T1 arg1, T2 arg2)
+            internal MarshalItemAction(Action<T1, T2> action, T1 arg1, T2 arg2)
             {
                 this.action = action;
                 this.arg1 = arg1;
@@ -335,7 +335,7 @@ namespace TTRider.PowerShellAsync
         {
             private readonly Func<TRet> func;
 
-            internal MarshalItemFunc([NotNull] Func<TRet> func)
+            internal MarshalItemFunc(Func<TRet> func)
             {
                 this.func = func;
             }
@@ -350,7 +350,7 @@ namespace TTRider.PowerShellAsync
             private readonly Func<T1, TRet> func;
             private readonly T1 arg1;
 
-            internal MarshalItemFunc([NotNull] Func<T1, TRet> func, T1 arg1)
+            internal MarshalItemFunc(Func<T1, TRet> func, T1 arg1)
             {
                 this.func = func;
                 this.arg1 = arg1;
@@ -367,7 +367,7 @@ namespace TTRider.PowerShellAsync
             private readonly T1 arg1;
             private readonly T2 arg2;
 
-            internal MarshalItemFunc([NotNull] Func<T1, T2, TRet> func, T1 arg1, T2 arg2)
+            internal MarshalItemFunc(Func<T1, T2, TRet> func, T1 arg1, T2 arg2)
             {
                 this.func = func;
                 this.arg1 = arg1;
@@ -386,7 +386,7 @@ namespace TTRider.PowerShellAsync
             private readonly T2 arg2;
             private readonly T3 arg3;
 
-            internal MarshalItemFunc([NotNull] Func<T1, T2, T3, TRet> func, T1 arg1, T2 arg2, T3 arg3)
+            internal MarshalItemFunc(Func<T1, T2, T3, TRet> func, T1 arg1, T2 arg2, T3 arg3)
             {
                 this.func = func;
                 this.arg1 = arg1;
@@ -412,7 +412,7 @@ namespace TTRider.PowerShellAsync
             private TOut outVal;
             private readonly Task<TRet> retValTask;
 
-            internal MarshalItemFuncOut([NotNull] FuncOut func, T1 arg1, T2 arg2, T3 arg3)
+            internal MarshalItemFuncOut(FuncOut func, T1 arg1, T2 arg2, T3 arg3)
             {
                 this.func = func;
                 this.arg1 = arg1;
@@ -446,7 +446,7 @@ namespace TTRider.PowerShellAsync
             private TRef2 arg4;
             private TRet retVal;
 
-            internal MarshalItemFuncRef([NotNull] FuncRef func, T1 arg1, T2 arg2, TRef1 arg3, TRef2 arg4)
+            internal MarshalItemFuncRef(FuncRef func, T1 arg1, T2 arg2, TRef1 arg3, TRef2 arg4)
             {
                 this.func = func;
                 this.arg1 = arg1;

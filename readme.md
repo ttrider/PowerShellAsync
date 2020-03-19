@@ -28,6 +28,7 @@ With 3 easy steps you can take advantage of the async programming:
 
   * [Vladimir Yangurskiy](https://github.com/ttrider) 
   * [pgrefviau](https://github.com/pgrefviau) 
+  * [tig](https://github.com/tig)
 
 # Installation
 
