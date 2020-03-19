@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AssemblyName>PowerShellAsync</AssemblyName>
+    <AssemblyName>TTRider.PowerShellAsync</AssemblyName>
     <Version>1.1.0.0</Version>
     <Company>TTRider, L.L.C.</Company>
-    <Product>PowerShellAsync</Product>
+    <Product>TTRider.PowerShellAsync</Product>
     <Description>Base class for async-based cmdlets</Description>
     <Copyright>Copyright TTRider, L.L.C.</Copyright>
     <OutputType>Library</OutputType>
