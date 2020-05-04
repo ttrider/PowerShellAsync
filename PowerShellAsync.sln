@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		readme.md = readme.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowershellAsync", "PowershellAsync\PowershellAsync.csproj", "{0EC8A57E-68C8-42A8-80A3-D4C3B1D05ECC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerShellAsync", "PowerShellAsync\PowerShellAsync.csproj", "{0EC8A57E-68C8-42A8-80A3-D4C3B1D05ECC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{980DFF43-C7FA-4895-B65F-16CEC0B0DEB8}"
 EndProject
