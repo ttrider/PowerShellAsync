@@ -21,7 +21,7 @@ jobs:
         dotnet-version: 3.1.101
 
     - name: Restore
-      run:  dotnet restore -v diag
+      run:  dotnet restore -v d
 
     - name: Build with dotnet
       run: dotnet build --no-restore --configuration Release
