@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30021.99
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerShellAsync", "PowerShellAsync\PowerShellAsync.csproj", "{07698A5B-BB2B-40BE-88A8-63486216E6EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerShellAsync", "PowerShellAsync\PowerShellAsync.csproj", "{07698A5B-BB2B-40BE-88A8-63486216E6EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{C0C70598-5BD7-4D71-944B-7CC8D2DFDA17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{C0C70598-5BD7-4D71-944B-7CC8D2DFDA17}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{15E3F177-5F88-4053-8591-2B25CED3DE35}"
 	ProjectSection(SolutionItems) = preProject
@@ -30,5 +30,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7D6544FA-4938-4572-BEAA-B9326E3E361F}
 	EndGlobalSection
 EndGlobal
