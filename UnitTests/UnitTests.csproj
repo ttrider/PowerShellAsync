@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PowershellAsync\PowershellAsync.csproj" />
+    <ProjectReference Include="..\PowerShellAsync\PowerShellAsync.csproj" />
   </ItemGroup>
 
 </Project>
