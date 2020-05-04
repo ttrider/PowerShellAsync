@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>TTRider.PowerShellAsync.dll</id>
+    <version>1.1.0.0</version>
+<<<<<<< HEAD
+    <authors>TTRider,tjrockefeller,pgrefviau,tig</authors>
+=======
+    <authors>TTRider</authors>
+>>>>>>> dotnetcore31
+    <owners>TTRider</owners>
+    <licenseUrl>https://github.com/ttrider/powershellasync/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/ttrider/powershellasync</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Base class for async-supported PowerShell cmdlets.</description>
+    <releaseNotes>
+      1.1.0.0
+      * .NET Core 3.1 Support
+      * Removed dependency on Jetbrains.Annoations
+      1.0.1.0
+      * Bug fixes
+      1.0.0.0
+      * Initial Release
+    </releaseNotes>
+    <copyright>Copyright (C) 2014 - 2020 TTRider, L.L.C.</copyright>
+    <tags>PowerShell</tags>
+    <dependencies>
+      <dependency id="System.Management.Automation" version="1.0" />
+    </dependencies>
+  </metadata>
+</package>
