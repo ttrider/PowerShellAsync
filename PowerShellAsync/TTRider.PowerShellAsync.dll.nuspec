@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>TTRider.PowerShellAsync.dll</id>
-    <version>1.1.0.0</version>
+    <version>1.1.0.1</version>
     <authors>TTRider,tjrockefeller,pgrefviau,tig</authors>
     <owners>TTRider</owners>
     <licenseUrl>https://github.com/ttrider/powershellasync/blob/master/LICENSE</licenseUrl>
@@ -10,6 +10,8 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Base class for async-supported PowerShell cmdlets.</description>
     <releaseNotes>
+      1.1.0.1
+      * Fixed CI workflow
       1.1.0.0
       * .NET Core 3.1 Support
       * Removed dependency on Jetbrains.Annoations
